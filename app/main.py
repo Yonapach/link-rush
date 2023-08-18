@@ -30,7 +30,7 @@ async def create_url(
 
 @server.get("/delete")
 async def delete_url(
-    short_url: HttpUrl = Query(..., title="Original URL"), session: AsyncSession = Depends(get_session)
+    short_url: HttpUrl = Query(..., title="Short URL"), session: AsyncSession = Depends(get_session)
 ) -> int:
     """
     status
@@ -54,7 +54,7 @@ async def delete_url(
 
 @server.get("/get_original")
 async def get_original_url(
-    short_url: HttpUrl = Query(..., title="Original URL"), session: AsyncSession = Depends(get_session)
+    short_url: HttpUrl = Query(..., title="Short URL"), session: AsyncSession = Depends(get_session)
 ) -> str | None:
     if short_url.host == settings.base_url.host:
         short_path = short_url.path.removeprefix("/")
