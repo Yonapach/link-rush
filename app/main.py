@@ -4,7 +4,7 @@ from sqlalchemy import delete, select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from db import get_first, is_exists, get_session
+from db import get_first, get_session
 from models import Url
 from utils import get_uniq_short_path, is_short_path_exists
 
@@ -14,14 +14,18 @@ server = FastAPI()
 @server.get("/create")
 async def create_url(
     original_url: HttpUrl = Query(..., title="Original URL"), session: AsyncSession = Depends(get_session)
-) -> None:
+) -> str:
     original_url = original_url.unicode_string()
-    stmt = select(exists().where(Url.original == original_url))
+    stmt = select(Url).where(Url.original == original_url)
 
-    if not await is_exists(stmt, session):
+    url = await get_first(stmt, session)
+    if not url:
         short_path = await get_uniq_short_path(session)
-        session.add(Url(original=original_url, short=short_path))
+        url = Url(original=original_url, short=short_path)
+        session.add(url)
         await session.commit()
+
+    return url.absolute_short
 
 
 @server.get("/delete")

@@ -4,7 +4,6 @@ import string
 from sqlalchemy import select, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import is_exists
 from models import Url
 
 chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
@@ -23,4 +22,5 @@ async def get_uniq_short_path(session: AsyncSession) -> str:
 
 async def is_short_path_exists(url: str, session: AsyncSession) -> bool:
     stmt = select(exists().where(Url.short == url))
-    return await is_exists(stmt, session)
+    res = await session.execute(stmt)
+    return res.scalar()

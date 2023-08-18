@@ -18,11 +18,6 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await session.close()
 
 
-async def is_exists(stmt: select, session: AsyncSession) -> bool:
-    res = await session.execute(stmt)
-    return res.scalar()
-
-
 async def get_first(stmt: select, session: AsyncSession):
     res = await session.execute(stmt.limit(1))
     return res.scalar()
