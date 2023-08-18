@@ -1,0 +1,5 @@
+.*
+docker-compose.*
+Dockerfile
+
+db_data

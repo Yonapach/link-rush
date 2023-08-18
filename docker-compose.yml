@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  server:
+    container_name: ${IMAGE_NAME}-server
+    image: ${IMAGE_NAME}:${IMAGE_TAG}
+    build:
+      dockerfile: Dockerfile
+      context: ./deploy
+    env_file:
+      - ./.env
+    volumes:
+      - ./app:/app
+#      - ./deploy/gunicorn.${IMAGE_TAG}.py:/gunicorn.py
+    working_dir: /app
+
+  db:
+    container_name: ${IMAGE_NAME}-db
+    image: postgres:14
+    env_file:
+      - ./.env
+    volumes:
+      - ./deploy/db_data:/var/lib/postgresql/data
+#      - ./deploy/postgresql.${IMAGE_TAG}.conf:/var/lib/postgresql/data/postgresql.conf

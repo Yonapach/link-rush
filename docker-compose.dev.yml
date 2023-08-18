@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  server:
+    ports: ["5000:5000"]
+    command: uvicorn main:server --reload --host 0.0.0.0 --port 5000
+
+  db:
+    ports: ["5432:5432"]

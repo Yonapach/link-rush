@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+docker compose --project-name=link-rush --project-directory=. \
+  -f docker-compose.yml \
+  -f docker-compose.dev.yml \
+  "$@"
