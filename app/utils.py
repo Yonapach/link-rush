@@ -1,26 +1,17 @@
-import random
-import string
+from sqids import Sqids
 
-from sqlalchemy import select, exists
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from models import Url
-
-chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+sqids = Sqids(min_length=4)
 
 
-def get_random_str(length: int = 5) -> str:
-    return "".join(random.choices(chars, k=length))
+def get_short_url(url_id: int) -> str:
+    return sqids.encode([url_id])
 
 
-async def get_uniq_short_path(session: AsyncSession) -> str:
-    while True:
-        short_path = get_random_str()
-        if not await is_short_path_exists(short_path, session):
-            return short_path
+def get_id(short_path: str) -> int | None:
+    num_repr = sqids.decode(short_path)
 
+    if num_repr and len(num_repr) == 1:
+        url_id = num_repr[0]
 
-async def is_short_path_exists(url: str, session: AsyncSession) -> bool:
-    stmt = select(exists().where(Url.short == url))
-    res = await session.execute(stmt)
-    return res.scalar()
+        if 0 < url_id < 2147483647:  # 2^31 - 1 (max len serial4)
+            return url_id

@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr, DeclarativeBase
 
 from config import settings
+from utils import get_short_url
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -13,8 +14,7 @@ class Base(AsyncAttrs, DeclarativeBase):
 class Url(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     original: Mapped[str] = mapped_column(unique=True, index=True)
-    short: Mapped[str] = mapped_column(unique=True, index=True)
 
     @property
     def absolute_short(self) -> str:
-        return settings.base_url.unicode_string() + self.short
+        return settings.base_url.unicode_string() + get_short_url(self.id)
