@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Body
 from pydantic import HttpUrl
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,9 +11,9 @@ from utils import get_id
 server = FastAPI()
 
 
-@server.get("/create")
+@server.post("/create")
 async def create_url(
-    original_url: HttpUrl = Query(..., title="Original URL"), session: AsyncSession = Depends(get_session)
+    original_url: HttpUrl = Body(..., title="Original URL"), session: AsyncSession = Depends(get_session)
 ) -> str:
     original_url = original_url.unicode_string()
     stmt = select(Url).where(Url.original == original_url)
@@ -24,12 +24,12 @@ async def create_url(
         session.add(url_obj)
         await session.commit()
 
-    return url_obj.absolute_short
+    return url_obj.short
 
 
-@server.get("/delete")
+@server.post("/delete")
 async def delete_url(
-    short_url: HttpUrl = Query(..., title="Short URL"), session: AsyncSession = Depends(get_session)
+    short_url: HttpUrl = Body(..., title="Short URL"), session: AsyncSession = Depends(get_session)
 ) -> int:
     """
     status
@@ -52,9 +52,9 @@ async def delete_url(
     return status
 
 
-@server.get("/get_original")
+@server.post("/get_original")
 async def get_original_url(
-    short_url: HttpUrl = Query(..., title="Short URL"), session: AsyncSession = Depends(get_session)
+    short_url: HttpUrl = Body(..., title="Short URL"), session: AsyncSession = Depends(get_session)
 ) -> str | None:
     if short_url.host == settings.base_url.host:
         short_path = short_url.path.removeprefix("/")

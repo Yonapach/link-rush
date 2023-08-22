@@ -1,9 +1,9 @@
 from sqids import Sqids
 
-sqids = Sqids(min_length=4)
+sqids = Sqids()
 
 
-def get_short_url(url_id: int) -> str:
+def get_short_path(url_id: int) -> str:
     return sqids.encode([url_id])
 
 
